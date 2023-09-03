@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Schneller Pizza Teig für amerikanische Pizza</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <div class="container mt-5">
+    <h1>Schneller Pizza Teig für amerikanische Pizza - Papa John's, Dominos, Pizza Hut Stil</h1>
+    <h2><a href="https://www.youtube.com/watch?v=P1nlMUvzifE">Video Anleitung</a></h2>
+
+    <div class="btn-group mb-3" role="group" aria-label="Berechnungsmethode">
+      <button type="button" class="btn btn-dark active" id="btnPizza">Berechnung nach Anzahl Pizzen</button>
+      <button type="button" class="btn btn-light" id="btnFlour">Berechnung nach Mehlmenge</button>
+    </div>
+
+    <div class="mb-3" id="pizzaSliderField">
+      <label for="pizzaSlider" class="form-label">Anzahl der Pizzas</label>
+      <input type="range" class="form-range" id="pizzaSlider" min="0.5" max="10" step="0.5">
+      <span id="pizzaSliderValue">0.5</span>
+    </div>
+
+    <div class="mb-3 d-none" id="flourSliderField">
+      <label for="flourSlider" class="form-label">Menge des Mehls (g)</label>
+      <input type="range" class="form-range" id="flourSlider" min="100" max="2000" step="100">
+      <span id="flourSliderValue">100</span> g
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 border p-3">
+        <h3>Zutaten</h3>
+        <ul id="ingredients">
+          <!-- Zutaten werden hier eingefügt -->
+        </ul>
+      </div>
+      <div class="col-md-6 border p-3">
+        <h3>Anleitung</h3>
+        <ol>
+          <li>In einer separaten Schüssel Mehl und Hefe mischen.</li>
+          <li>Wasser auf 50 Grad erhitzen.</li>
+          <li>Das erhitzte Wasser mit Salz, Öl und Honig in der Rührschüssel mischen.</li>
+          <li>Die Mehlmischung zur Flüssigkeit in die Rührschüssel geben.</li>
+          <li>Den Teig 2 Stunden bei Zimmertemperatur (max. 27 Grad) ruhen lassen.</li>
+          <li>Nach 2 Stunden den Teig zubereiten oder die Luft herausdrücken.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const baseAmounts = {
+      "Mehl (Caputo blau)": 1116,
+      "Wasser": 630,
+      "Hefe (trocken)": 9,
+      "Salz": 17,
+      "Öl": 81,
+      "Honig": 56
+    };
+
+    const baseDough = 350;
+
+    function updateIngredients() {
+      const isBasedOnFlour = $('#btnFlour').hasClass('active');
+      let pizzaSliderValue = parseFloat($("#pizzaSlider").val());
+      let flourSliderValue = parseFloat($("#flourSlider").val());
+      let doughNeeded = isBasedOnFlour ? (flourSliderValue / baseAmounts["Mehl (Caputo blau)"]) * Object.values(baseAmounts).reduce((a, b) => a + b, 0) : baseDough * pizzaSliderValue;
+      let factor = doughNeeded / Object.values(baseAmounts).reduce((a, b) => a + b, 0);
+
+      if (isBasedOnFlour) {
+        $("#pizzaSlider").val((doughNeeded / baseDough).toFixed(1));
+        $("#pizzaSliderValue").text($("#pizzaSlider").val());
+      } else {
+        $("#flourSlider").val((baseAmounts["Mehl (Caputo blau)"] * factor).toFixed(0));
+        $("#flourSliderValue").text($("#flourSlider").val());
+      }
+
+      $("#ingredients").empty();
+      for (const [ingredient, amount] of Object.entries(baseAmounts)) {
+        const newAmount = (amount * factor).toFixed(2);
+        $("#ingredients").append(`<li>${ingredient}: ${newAmount} g</li>`);
+      }
+    }
+
+    $(document).ready(function() {
+      updateIngredients();
+
+      $('#btnPizza, #btnFlour').click(function() {
+        $('#btnPizza, #btnFlour').toggleClass('active btn-dark btn-light');
+        $('#pizzaSliderField, #flourSliderField').toggleClass('d-none');
+        updateIngredients();
+      });
+
+      $("#pizzaSlider, #flourSlider").on("input", function() {
+        const sliderValue = $(this).val();
+        $(this).next().text(sliderValue);
+        updateIngredients();
+      });
+    });
+  </script>
+</body>
+</html>

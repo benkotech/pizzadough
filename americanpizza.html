@@ -73,7 +73,7 @@
       const isBasedOnFlour = $('#btnFlour').hasClass('active');
       let pizzaSliderValue = parseFloat($("#pizzaSlider").val());
       let flourSliderValue = parseFloat($("#flourSlider").val());
-      let doughNeeded = isBasedOnFlour ? (flourSliderValue / baseAmounts["Mehl (Caputo blau)"]) * Object.values(baseAmounts).reduce((a, b) => a + b, 0) : baseDough * pizzaSliderValue;
+      let doughNeeded = isBasedOnFlour ? (flourSliderValue / baseAmounts["Mehl (Caputo Typo 00)"]) * Object.values(baseAmounts).reduce((a, b) => a + b, 0) : baseDough * pizzaSliderValue;
       let factor = doughNeeded / Object.values(baseAmounts).reduce((a, b) => a + b, 0);
 
       if (isBasedOnFlour) {
